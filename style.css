@@ -4,6 +4,7 @@
     --card-bg: rgba(255, 255, 255, 0.2);
     --input-border: #ccc;
     --button-bg: #4a90e2;
+    --error-color: #ff5757;
 }
 
 * {
@@ -45,13 +46,14 @@ body {
 }
 
 #city-input {
-    padding: 10px;
+    padding: 10px 15px;
     border: 1px solid var(--input-border);
     border-radius: 20px;
     outline: none;
     width: 70%;
     margin-right: 10px;
     background: var(--primary-color);
+    font-size: 16px;
 }
 
 #search-button {
@@ -62,6 +64,7 @@ body {
     border-radius: 20px;
     cursor: pointer;
     transition: background 0.3s ease;
+    font-size: 16px;
 }
 
 #search-button:hover {
@@ -70,14 +73,14 @@ body {
 
 /* Error message styling */
 #error-message {
-    color: #ff5757;
+    color: var(--error-color);
     background-color: rgba(255, 87, 87, 0.1);
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 20px;
     font-weight: 500;
     display: none;
-    border-left: 4px solid #ff5757;
+    border-left: 4px solid var(--error-color);
 }
 
 .weather-container {
@@ -98,6 +101,7 @@ body {
     font-size: 0.9em;
     color: var(--text-color);
     opacity: 0.8;
+    margin-top: 5px;
 }
 
 .current-weather {
@@ -110,6 +114,7 @@ body {
 #weather-icon {
     width: 100px;
     height: 100px;
+    margin: 10px 0;
 }
 
 .temperature-container {
@@ -179,6 +184,15 @@ body {
 
     #temperature {
         font-size: 3em;
+    }
+    
+    .additional-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .info-card {
+        min-width: auto;
     }
 }
 
