@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // For updating the local time continuously
     let timeInterval;
 
+    // Load Mumbai weather by default
+    window.onload = function() {
+        getWeatherData('Mumbai');
+    };
+
     searchButton.addEventListener('click', () => {
         const city = cityInput.value.trim();
         if (city) {
@@ -147,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'https://images.unsplash.com/photo-1502444330042-d1a2933758a9?ixlib=rb-1.2.1&q=80&w=1080' : 
                 'https://images.unsplash.com/photo-1510443906660-c4bfd0a2f44c?ixlib=rb-1.2.1&q=80&w=1080',
             'Rain': isDaytime ? 
-                'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080' : 
+                'https://images.unsplash.com/icon-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080' : 
                 'https://images.unsplash.com/photo-1521406606085-f12b62a63750?ixlib=rb-1.2.1&q=80&w=1080',
             'Drizzle': 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080',
             'Thunderstorm': 'https://images.unsplash.com/photo-1550401874-845231792942?ixlib=rb-1.2.1&q=80&w=1080',
@@ -168,7 +173,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const imageUrl = backgrounds[weatherKey] || backgrounds['Clear'];
         
         if (imageUrl) {
-            bodyEl.style.backgroundImage = `url('${imageUrl}')`;
+            // Create a new image to preload and check if it loads successfully
+            const img = new Image();
+            img.onload = function() {
+                bodyEl.style.backgroundImage = `url('${imageUrl}')`;
+            };
+            img.onerror = function() {
+                // Fallback background if image fails to load
+                bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080')`;
+            };
+            img.src = imageUrl;
         } else {
             // Default background if no specific image is found
             bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080')`;
