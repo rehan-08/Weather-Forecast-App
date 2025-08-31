@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // This is the div for displaying error messages in the UI.
     const errorMessageEl = document.getElementById('error-message');
 
-    // Fixed API key (added the missing 'e' at the end)
-    const apiKey = '68c07688f8dfd6e01e870c351db6759e';
+    // Using the new API key you provided
+    const apiKey = 'c746666381523f8387a412c8fa6ad920';
 
     searchButton.addEventListener('click', () => {
         const city = cityInput.value.trim();
@@ -51,15 +51,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(apiUrl);
+            const data = await response.json();
+            
             if (!response.ok) {
-                // If the response is not okay (e.g., status 404), throw an error
-                if (response.status === 404) {
+                // If the response is not okay, throw an error
+                if (data.cod === 401) {
+                    throw new Error('API Error 401: Unauthorized. Please check your API key.');
+                } else if (data.cod === 404) {
                     throw new Error('City not found! Please check the spelling and try again.');
                 } else {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                    throw new Error(`Error ${data.cod}: ${data.message}`);
                 }
             }
-            const data = await response.json();
+            
             updateUI(data);
         } catch (error) {
             // Display the error message in the dedicated UI element
@@ -74,8 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
             humidityEl.textContent = '-';
             windSpeedEl.textContent = '-';
             weatherIconEl.src = '';
-            dateEl.textContent = new Date().toLocaleDateString(undefined, 
-                { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            // Set current date
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateEl.textContent = now.toLocaleDateString(undefined, options);
         }
     }
 
@@ -92,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         humidityEl.textContent = `${main.humidity}%`;
         windSpeedEl.textContent = `${wind.speed} m/s`;
 
-        // FIX: The weather icon URL now uses 'https' to prevent a Mixed Content error
+        // Weather icon
         weatherIconEl.src = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
         weatherIconEl.alt = weather[0].description;
 
@@ -124,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             'Thunderstorm': {
                 day: 'https://images.unsplash.com/photo-1550401874-845231792942?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxM3x8dGhlbmRlcnN0b3JtJTIwZGF5fGVufDB8fHx8MTYyOTc4MjA2NQ&ixlib=rb-1.2.1&q=80&w=1080',
-                night: 'https://images.unsplash.com/photo-1556942007-3532f111b7ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxNnx8dGhlbmRlcnN0b3JtJTIwbmlnaHR8ZW58MHx8fHwxNjI5NzgyMDYz&ixlib=rb-1.2.1&q=80&w=1080'
+                night: 'https://images.unsplash.com/photo-1556942007-3532f111b7ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxNnx8dGhlbmRlcnN0b3JtmJTIwbmlnaHR8ZW58MHx8fHwxNjI5NzgyMDYz&ixlib=rb-1.2.1&q=80&w=1080'
             },
             'Snow': {
                 day: 'https://images.unsplash.com/photo-1517299321689-526487593c6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw1fHxzbndlY2FwZSUyMGRheXxlbnwwfHx8fDE2Mjk3ODI1NDY&ixlib=rb-1.2.1&q=80&w=1080',
@@ -142,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (imageUrl) {
             bodyEl.style.backgroundImage = `url('${imageUrl}')`;
         } else {
-            bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJchaW5zfGVufDB8fHx8MTYyOTc4MTY3Ng&ixlib=rb-1.2.1&q=80&w=1080')`;
+            bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw3fHxwbGVhc2FudCUyMHdlYXRoZXIlMjBtb3VudGFpbnN8ZW58MHx8fHwxNjI5NzgyNTcw&ixlib=rb-1.2.1&q=80&w=1080')`;
         }
         
         // Add a fallback in case the image fails to load
@@ -152,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initial load with a default city
-    getWeatherData('New York');
+    getWeatherData('London');
 });
 
 
