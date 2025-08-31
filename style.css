@@ -62,6 +62,16 @@ body {
     background: #3a75c4;
 }
 
+/* New CSS for the error message div */
+#error-message {
+    color: #ff5757;
+    background-color: rgba(255, 87, 87, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
 .weather-container {
     padding: 20px;
 }
