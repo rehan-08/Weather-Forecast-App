@@ -21,7 +21,7 @@ body {
     align-items: center;
     height: 100vh;
     color: var(--text-color);
-    background-image: url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxNXx8cGxlYXNhbnQlMjB3ZWF0aGVyJTIwbW91bnRhaW5zfGVufDB8fHx8MTYyOTc4MTY3Ng&ixlib=rb-1.2.1&q=80&w=1080');
+    background-image: url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080');
     background-size: cover;
     background-position: center;
     transition: background-image 0.5s ease-in-out;
@@ -102,6 +102,13 @@ body {
     color: var(--text-color);
     opacity: 0.8;
     margin-top: 5px;
+}
+
+#local-time {
+    font-size: 1.2em;
+    font-weight: 500;
+    margin-top: 5px;
+    color: #4a90e2;
 }
 
 .current-weather {
@@ -195,5 +202,6 @@ body {
         min-width: auto;
     }
 }
+
 
 
