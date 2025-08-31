@@ -6,6 +6,12 @@
     --button-bg: #4a90e2;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -62,14 +68,16 @@ body {
     background: #3a75c4;
 }
 
-/* New CSS for the error message div */
+/* Error message styling */
 #error-message {
     color: #ff5757;
     background-color: rgba(255, 87, 87, 0.1);
     border-radius: 10px;
-    padding: 10px;
+    padding: 15px;
     margin-bottom: 20px;
     font-weight: 500;
+    display: none;
+    border-left: 4px solid #ff5757;
 }
 
 .weather-container {
@@ -153,6 +161,17 @@ body {
     font-weight: 500;
 }
 
+/* Loading animation */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.loading {
+    animation: pulse 1.5s infinite;
+}
+
 @media (max-width: 600px) {
     .weather-app {
         padding: 20px;
@@ -162,3 +181,4 @@ body {
         font-size: 3em;
     }
 }
+
