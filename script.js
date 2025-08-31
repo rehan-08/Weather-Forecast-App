@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
         humidityEl.textContent = '';
         windSpeedEl.textContent = '';
         weatherIconEl.src = '';
-        dateEl.textContent = '';
         
         const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
@@ -109,10 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
         dateEl.textContent = localTime.toLocaleDateString(undefined, options);
 
         // Change UI based on weather and time
-        updateBackground(weather[0].main, dt, timezone);
+        updateBackground(weather[0].main, weather[0].description, dt, timezone);
     }
 
-    function updateBackground(weatherCondition, dt, timezone) {
+    function updateBackground(weatherCondition, weatherDescription, dt, timezone) {
         const localHour = new Date((dt + timezone) * 1000).getUTCHours();
         const isDaytime = localHour >= 6 && localHour < 18;
 
@@ -129,9 +128,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 day: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxNHx8cmFpbiUyMGRheXxlbnwwfHx8fDE2Mjk3ODE5OTY&ixlib=rb-1.2.1&q=80&w=1080',
                 night: 'https://images.unsplash.com/photo-1521406606085-f12b62a63750?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxM3x8cmFpbiUyMG5pZ2h0fGVufDB8fHx8MTYyOTc4MTk5Nw&ixlib=rb-1.2.1&q=80&w=1080'
             },
+            'Drizzle': {
+                day: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxNHx8cmFpbiUyMGRheXxlbnwwfHx8fDE2Mjk3ODE5OTY&ixlib=rb-1.2.1&q=80&w=1080',
+                night: 'https://images.unsplash.com/photo-1521406606085-f12b62a63750?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxM3x8cmFpbiUyMG5pZ2h0fGVufDB8fHx8MTYyOTc4MTk5Nw&ixlib=rb-1.2.1&q=80&w=1080'
+            },
             'Thunderstorm': {
                 day: 'https://images.unsplash.com/photo-1550401874-845231792942?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxM3x8dGhlbmRlcnN0b3JtJTIwZGF5fGVufDB8fHx8MTYyOTc4MjA2NQ&ixlib=rb-1.2.1&q=80&w=1080',
-                night: 'https://images.unsplash.com/photo-1556942007-3532f111b7ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxNnx8dGhlbmRlcnN0b3JtmJTIwbmlnaHR8ZW58MHx8fHwxNjI5NzgyMDYz&ixlib=rb-1.2.1&q=80&w=1080'
+                night: 'https://images.unsplash.com/photo-1556942007-3532f111b7ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxNnx8dGhlbmRerN0b3JtJTIwbmlnaHR8ZW58MHx8fHwxNjI5NzgyMDYz&ixlib=rb-1.2.1&q=80&w=1080'
             },
             'Snow': {
                 day: 'https://images.unsplash.com/photo-1517299321689-526487593c6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw1fHxzbndlY2FwZSUyMGRheXxlbnwwfHx8fDE2Mjk3ODI1NDY&ixlib=rb-1.2.1&q=80&w=1080',
@@ -140,15 +143,31 @@ document.addEventListener('DOMContentLoaded', () => {
             'Mist': {
                 day: 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw3fHxtaXN0eSUyMGRheXxlbnwwfHx8fDE2Mjk3ODI2NTU&ixlib=rb-1.2.1&q=80&w=1080',
                 night: 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxM3x8Zm9nZ3klMjBuaWdodHxlbnwwfHx8fDE2Mjk3ODI2NTU&ixlib=rb-1.2.1&q=80&w=1080'
+            },
+            'Fog': {
+                day: 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw3fHxtaXN0eSUyMGRheXxlbnwwfHx8fDE2Mjk3ODI2NTU&ixlib=rb-1.2.1&q=80&w=1080',
+                night: 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxM3x8Zm9nZ3klMjBuaWdodHxlbnwwfHx8fDE2Mjk3ODI2NTU&ixlib=rb-1.2.1&q=80&w=1080'
+            },
+            'Haze': {
+                day: 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw3fHxtaXN0eSUyMGRheXxlbnwwfHx8fDE2Mjk3ODI2NTU&ixlib=rb-1.2.1&q=80&w=1080',
+                night: 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHwxM3x8Zm9nZ3klMjBuaWdodHxlbnwwfHx8fDE2Mjk3ODI2NTU&ixlib=rb-1.2.1&q=80&w=1080'
             }
         };
 
-        const weatherKey = weatherCondition === 'Drizzle' ? 'Rain' : weatherCondition;
+        // Handle different weather conditions
+        let weatherKey = weatherCondition;
+        if (weatherCondition === 'Drizzle') {
+            weatherKey = 'Rain';
+        } else if (weatherCondition === 'Fog' || weatherCondition === 'Haze') {
+            weatherKey = 'Mist';
+        }
+
         const imageUrl = isDaytime ? backgrounds[weatherKey]?.day : backgrounds[weatherKey]?.night;
         
         if (imageUrl) {
             bodyEl.style.backgroundImage = `url('${imageUrl}')`;
         } else {
+            // Default background if no specific image is found
             bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw3fHxwbGVhc2FudCUyMHdlYXRoZXIlMjBtb3VudGFpbnN8ZW58MHx8fHwxNjI5NzgyNTcw&ixlib=rb-1.2.1&q=80&w=1080')`;
         }
         
@@ -158,9 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Initial load with a default city
-    getWeatherData('London');
+    // Set initial date
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateEl.textContent = now.toLocaleDateString(undefined, options);
 });
+
 
 
 
