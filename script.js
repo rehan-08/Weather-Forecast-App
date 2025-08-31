@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const windSpeedEl = document.getElementById('wind-speed');
     const weatherIconEl = document.getElementById('weather-icon');
     const bodyEl = document.body;
+    
+    // This is the new div for displaying error messages in the UI.
+    const errorMessageEl = document.getElementById('error-message');
 
+    // Make sure your OpenWeatherMap API key is correct here.
     const apiKey = '68c07688f8dfd6e01e870c351db6759';
 
     searchButton.addEventListener('click', () => {
@@ -29,18 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function getWeatherData(city) {
+        // Clear any previous error messages when a new search begins.
+        errorMessageEl.textContent = '';
         const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
         try {
             const response = await fetch(apiUrl);
             if (!response.ok) {
+                // If the response is not okay (e.g., status 404), throw an error.
                 throw new Error('City not found!');
             }
             const data = await response.json();
             updateUI(data);
         } catch (error) {
-            
-            alert(error.message);
+            // Display the error message in the dedicated UI element instead of using an alert.
+            errorMessageEl.textContent = `Error: ${error.message}`;
         }
     }
 
@@ -54,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         humidityEl.textContent = `${main.humidity}%`;
         windSpeedEl.textContent = `${wind.speed} m/s`;
 
-        
+        // FIX: The weather icon URL now uses 'https' to prevent a Mixed Content error.
         weatherIconEl.src = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
         weatherIconEl.alt = weather[0].description;
 
