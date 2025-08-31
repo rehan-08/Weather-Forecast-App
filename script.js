@@ -10,11 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const weatherIconEl = document.getElementById('weather-icon');
     const bodyEl = document.body;
     
-    // This is the new div for displaying error messages in the UI.
+    // This is the div for displaying error messages in the UI.
     const errorMessageEl = document.getElementById('error-message');
 
-    // Make sure your OpenWeatherMap API key is correct here.
-    const apiKey = '68c07688f8dfd6e01e870c351db6759';
+    // Fixed API key (added the missing 'e' at the end)
+    const apiKey = '68c07688f8dfd6e01e870c351db6759e';
 
     searchButton.addEventListener('click', () => {
         const city = cityInput.value.trim();
@@ -33,26 +33,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function getWeatherData(city) {
-        // Clear any previous error messages when a new search begins.
+        // Clear any previous error messages when a new search begins
         errorMessageEl.textContent = '';
+        errorMessageEl.style.display = 'none';
+        
+        // Show loading state
+        cityNameEl.textContent = 'Loading...';
+        cityNameEl.classList.add('loading');
+        temperatureEl.textContent = '';
+        descriptionEl.textContent = '';
+        humidityEl.textContent = '';
+        windSpeedEl.textContent = '';
+        weatherIconEl.src = '';
+        dateEl.textContent = '';
+        
         const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
         try {
             const response = await fetch(apiUrl);
             if (!response.ok) {
-                // If the response is not okay (e.g., status 404), throw an error.
-                throw new Error('City not found!');
+                // If the response is not okay (e.g., status 404), throw an error
+                if (response.status === 404) {
+                    throw new Error('City not found! Please check the spelling and try again.');
+                } else {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
             }
             const data = await response.json();
             updateUI(data);
         } catch (error) {
-            // Display the error message in the dedicated UI element instead of using an alert.
-            errorMessageEl.textContent = `Error: ${error.message}`;
+            // Display the error message in the dedicated UI element
+            errorMessageEl.textContent = error.message;
+            errorMessageEl.style.display = 'block';
+            
+            // Reset UI elements
+            cityNameEl.textContent = 'City not found';
+            cityNameEl.classList.remove('loading');
+            temperatureEl.textContent = '-';
+            descriptionEl.textContent = 'Please try another city';
+            humidityEl.textContent = '-';
+            windSpeedEl.textContent = '-';
+            weatherIconEl.src = '';
+            dateEl.textContent = new Date().toLocaleDateString(undefined, 
+                { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
     }
 
     function updateUI(data) {
         const { name, sys, main, weather, wind, dt, timezone } = data;
+
+        // Remove loading animation
+        cityNameEl.classList.remove('loading');
 
         // Update weather details
         cityNameEl.textContent = `${name}, ${sys.country}`;
@@ -61,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         humidityEl.textContent = `${main.humidity}%`;
         windSpeedEl.textContent = `${wind.speed} m/s`;
 
-        // FIX: The weather icon URL now uses 'https' to prevent a Mixed Content error.
+        // FIX: The weather icon URL now uses 'https' to prevent a Mixed Content error
         weatherIconEl.src = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
         weatherIconEl.alt = weather[0].description;
 
@@ -111,12 +142,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (imageUrl) {
             bodyEl.style.backgroundImage = `url('${imageUrl}')`;
         } else {
-            bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw3fHxwbGVhc2FudCUyMHdlYXRoZXIlMjBtb3VudGFpbnN8ZW58MHx8fHwxNjI5NzgyNTcw&ixlib=rb-1.2.1&q=80&w=1080')`;
+            bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJchaW5zfGVufDB8fHx8MTYyOTc4MTY3Ng&ixlib=rb-1.2.1&q=80&w=1080')`;
         }
+        
+        // Add a fallback in case the image fails to load
+        bodyEl.onerror = function() {
+            bodyEl.style.backgroundImage = "url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMzczOTd8MHwxfHNlYXJjaHw3fHxwbGVhc2FudCUyMHdlYXRoZXIlMjBtb3VudGFpbnN8ZW58MHx8fHwxNjI5NzgyNTcw&ixlib=rb-1.2.1&q=80&w=1080')";
+        };
     }
 
     // Initial load with a default city
     getWeatherData('New York');
 });
+
 
 
