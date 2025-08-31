@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const weatherIconEl = document.getElementById('weather-icon');
     const bodyEl = document.body;
 
-    // Replace with your OpenWeatherMap API key
+    // IMPORTANT: Make sure your OpenWeatherMap API key is correct here.
+    // The "City not found!" error in your screenshot often means the API key is incorrect or has a typo.
+    // Double-check the key from your account to ensure it is valid.
     const apiKey = '68c07688f8dfd6e01e870c351db6759';
 
     searchButton.addEventListener('click', () => {
@@ -30,16 +32,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function getWeatherData(city) {
+        // Construct the correct API URL with the city and API key.
         const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
         try {
             const response = await fetch(apiUrl);
+
+            // This line specifically checks if the API response was successful.
+            // A status of 404 (Not Found) is what causes the "City not found!" error.
             if (!response.ok) {
                 throw new Error('City not found!');
             }
             const data = await response.json();
             updateUI(data);
         } catch (error) {
+            // This alert shows the specific error message, like "City not found!".
+            // It's a crucial part of the code that tells you what went wrong.
             alert(error.message);
         }
     }
@@ -57,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         weatherIconEl.alt = weather[0].description;
 
         // Update date and time
-        const localTime = new Date((dt + timezone) * 1000); // Correctly apply timezone
+        const localTime = new Date((dt + timezone) * 1000);
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         dateEl.textContent = localTime.toLocaleDateString(undefined, options);
 
@@ -98,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const weatherKey = weatherCondition === 'Drizzle' ? 'Rain' : weatherCondition; // Group drizzle with rain
         const imageUrl = isDaytime ? backgrounds[weatherKey]?.day : backgrounds[weatherKey]?.night;
-
+        
         if (imageUrl) {
             bodyEl.style.backgroundImage = `url('${imageUrl}')`;
         } else {
