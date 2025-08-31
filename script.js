@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timeInterval = setInterval(() => updateLocalTime(timezone), 1000);
 
         // Change UI based on weather and time
-        updateBackground(weather[0].main, dt, timezone);
+        updateBackground(weather[0].main, weather[0].id, dt, timezone);
     }
 
     function updateLocalTime(timezone) {
@@ -139,27 +139,43 @@ document.addEventListener('DOMContentLoaded', () => {
         localTimeEl.textContent = `Local Time: ${localTime.toLocaleTimeString(undefined, timeOptions)}`;
     }
 
-    function updateBackground(weatherCondition, dt, timezone) {
+    function updateBackground(weatherCondition, weatherId, dt, timezone) {
         const localHour = new Date((dt + timezone) * 1000).getUTCHours();
         const isDaytime = localHour >= 6 && localHour < 18;
 
-        // Simplified background selection - using generic weather images
+        // Weather-specific backgrounds with more variety
         const backgrounds = {
+            // Clear skies
             'Clear': isDaytime ? 
-                'https://images.unsplash.com/photo-1558231908-4187e5b22079?ixlib=rb-1.2.1&q=80&w=1080' : 
-                'https://images.unsplash.com/photo-1475274058133-5fb9019277d3?ixlib=rb-1.2.1&q=80&w=1080',
+                'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80' : 
+                'https://images.unsplash.com/photo-1532978379173-523e16f371f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            
+            // Clouds
             'Clouds': isDaytime ? 
-                'https://images.unsplash.com/photo-1502444330042-d1a2933758a9?ixlib=rb-1.2.1&q=80&w=1080' : 
-                'https://images.unsplash.com/photo-1510443906660-c4bfd0a2f44c?ixlib=rb-1.2.1&q=80&w=1080',
+                'https://images.unsplash.com/photo-1562155610-e2a5ea9f305d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80' : 
+                'https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            
+            // Rain
             'Rain': isDaytime ? 
-                'https://images.unsplash.com/icon-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080' : 
-                'https://images.unsplash.com/photo-1521406606085-f12b62a63750?ixlib=rb-1.2.1&q=80&w=1080',
-            'Drizzle': 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080',
-            'Thunderstorm': 'https://images.unsplash.com/photo-1550401874-845231792942?ixlib=rb-1.2.1&q=80&w=1080',
-            'Snow': 'https://images.unsplash.com/photo-1517299321689-526487593c6f?ixlib=rb-1.2.1&q=80&w=1080',
-            'Mist': 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?ixlib=rb-1.2.1&q=80&w=1080',
-            'Fog': 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?ixlib=rb-1.2.1&q=80&w=1080',
-            'Haze': 'https://images.unsplash.com/photo-1520146059530-9b48f657e23a?ixlib=rb-1.2.1&q=80&w=1080'
+                'https://images.unsplash.com/photo-1438449805896-28a666819a20?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80' : 
+                'https://images.unsplash.com/photo-1519692933481-e162a57d6721?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            
+            // Drizzle
+            'Drizzle': 'https://images.unsplash.com/photo-1519692933481-e162a57d6721?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            
+            // Thunderstorm
+            'Thunderstorm': 'https://images.unsplash.com/photo-15988580915-6cf6c759c68d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            
+            // Snow
+            'Snow': 'https://images.unsplash.com/photo-1542603834501-6c379328ae4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            
+            // Mist/Fog/Haze
+            'Mist': 'https://images.unsplash.com/photo-1504609773096-6ffb4cdb1f07?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            'Fog': 'https://images.unsplash.com/photo-1504609773096-6ffb4cdb1f07?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            'Haze': 'https://images.unsplash.com/photo-1504609773096-6ffb4cdb1f07?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80',
+            
+            // Default
+            'Default': 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80'
         };
 
         // Handle different weather conditions
@@ -170,23 +186,19 @@ document.addEventListener('DOMContentLoaded', () => {
             weatherKey = 'Mist';
         }
 
-        const imageUrl = backgrounds[weatherKey] || backgrounds['Clear'];
+        // Select the appropriate background
+        const imageUrl = backgrounds[weatherKey] || backgrounds['Default'];
         
-        if (imageUrl) {
-            // Create a new image to preload and check if it loads successfully
-            const img = new Image();
-            img.onload = function() {
-                bodyEl.style.backgroundImage = `url('${imageUrl}')`;
-            };
-            img.onerror = function() {
-                // Fallback background if image fails to load
-                bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080')`;
-            };
-            img.src = imageUrl;
-        } else {
-            // Default background if no specific image is found
-            bodyEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&w=1080')`;
-        }
+        // Create a new image to preload and check if it loads successfully
+        const img = new Image();
+        img.onload = function() {
+            bodyEl.style.backgroundImage = `url('${imageUrl}')`;
+        };
+        img.onerror = function() {
+            // Fallback background if image fails to load
+            bodyEl.style.backgroundImage = `url('${backgrounds['Default']}')`;
+        };
+        img.src = imageUrl;
     }
 
     // Set initial date
@@ -194,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     dateEl.textContent = now.toLocaleDateString(undefined, options);
 });
+
 
 
 
